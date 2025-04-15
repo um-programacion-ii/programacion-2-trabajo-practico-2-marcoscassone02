@@ -1,3 +1,11 @@
+---
+name: Solicitud de Funcionalidad
+about: Proponé una nueva funcionalidad o mejora para el sistema
+title: "[FEATURE] "
+labels: enhancement
+assignees: ''
+---
+
 ## 🧾 Título
    
    <!-- Especificá brevemente el objetivo principal de la tarea -->
