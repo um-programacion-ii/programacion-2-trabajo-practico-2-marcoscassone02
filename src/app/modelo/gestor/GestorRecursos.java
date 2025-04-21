@@ -12,7 +12,7 @@ public class GestorRecursos {
         recursos.add(recurso);
     }
 
-    public List<RecursoDigital> getRecursos() {
+    public List<RecursoDigital> obtenerRecursos() {
         return recursos;
     }
 }
