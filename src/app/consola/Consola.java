@@ -75,18 +75,12 @@ public class Consola {
         }
     }
     private void buscarYFiltrar() {
-    System.out.print("Ingrese texto del título (deje vacío para omitir): ");
-    String titulo = scanner.nextLine();
-
+    
     System.out.println("Seleccione categoría (Libro, Revista, Audiolibro o vacía): ");
     String categoriaInput = scanner.nextLine();
 
     List<RecursoDigital> resultados = gestorRecursos.obtenerRecursos();
-
-    if (!titulo.isEmpty()) {
-        resultados = gestorRecursos.buscarPorTitulo(titulo);
-    }
-
+    
     if (!categoriaInput.isEmpty()) {
         try {
             Categoria categoria = Categoria.valueOf(categoriaInput);
