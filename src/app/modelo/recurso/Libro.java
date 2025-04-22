@@ -38,6 +38,10 @@ public class Libro implements RecursoDigital, Prestable, Renovable {
         return prestado;
     }
 
+    public boolean estaDisponible() {
+        return !prestado;
+    }
+
     public void renovar() {
         System.out.println("📘 El libro fue renovado.");
     }

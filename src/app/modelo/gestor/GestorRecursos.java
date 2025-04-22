@@ -24,7 +24,7 @@ public class GestorRecursos {
     private List<Prestamo> prestamos = new ArrayList<>();
     private Map<RecursoDigital, PriorityQueue<Reserva>> reservas = new HashMap<>();
     private ServicioNotificaciones servicioNotificaciones = new ServicioNotificacionesEmail();
-private ExecutorService executor = Executors.newFixedThreadPool(2);
+    private ExecutorService executor = Executors.newFixedThreadPool(2);
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -69,15 +69,16 @@ private ExecutorService executor = Executors.newFixedThreadPool(2);
         prestamos.add(new Prestamo(recurso, idUsuario));
     }
 
-    public void devolverRecurso(RecursoDigital recurso) {
+    public synchronized void devolverRecurso(RecursoDigital recurso) {
         if (recurso instanceof Prestable prestable) {
             prestable.devolver();
-            prestamos.stream()
-                .filter(p -> p.getRecurso().equals(recurso) && !p.estaDevuelto())
-                .findFirst()
-                .ifPresent(Prestamo::marcarDevuelto);
+            System.out.println("Recurso devuelto: " + recurso.getTitulo());
+            procesarReservas(recurso);
+        } else {
+            System.out.println("Este recurso no admite devolución.");
         }
     }
+    
 
     public List<Prestamo> obtenerPrestamos() {
         return prestamos;
@@ -87,7 +88,7 @@ private ExecutorService executor = Executors.newFixedThreadPool(2);
         reservas.get(recurso).offer(new Reserva(idUsuario));
     }
     
-    public void procesarReservas(RecursoDigital recurso) {
+    public synchronized void procesarReservas(RecursoDigital recurso) {
         PriorityQueue<Reserva> cola = reservas.get(recurso);
         if (cola != null && !cola.isEmpty()) {
             Reserva siguiente = cola.poll();
@@ -108,5 +109,19 @@ private ExecutorService executor = Executors.newFixedThreadPool(2);
             System.out.println("Usuario ID: " + r.getIdUsuario() + " | Fecha: " + r.getFechaReserva());
         }
     }
+    
+    public synchronized void prestarRecurso(RecursoDigital recurso, int idUsuario) throws RecursoNoDisponibleException {
+        if (recurso instanceof Prestable prestable) {
+            if (!prestable.estaDisponible()) {
+                throw new RecursoNoDisponibleException("El recurso no está disponible para préstamo.");
+            }
+            prestable.prestar();
+            System.out.println("Recurso prestado al usuario ID: " + idUsuario);
+        } else {
+            throw new RecursoNoDisponibleException("El recurso no admite préstamos.");
+        }
+    }
+    
+    
     
 }
