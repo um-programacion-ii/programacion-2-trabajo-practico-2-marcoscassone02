@@ -41,7 +41,9 @@ public class Consola {
         System.out.println("3. Buscar y filtrar recursos");
         System.out.println("4. Prestar recurso");
         System.out.println("5. Devolver recurso");
-        System.out.println("6. Salir");
+        System.out.println("6. Reservar recurso");
+        System.out.println("7. Ver reservas de recurso");
+        System.out.println("8. Salir");
     
         int opcion = scanner.nextInt();
         scanner.nextLine();
@@ -52,6 +54,8 @@ public class Consola {
             case 3 -> buscarYFiltrar();
             case 4 -> prestarRecurso();
             case 5 -> devolverRecurso();
+            case 6 -> reservarRecurso();
+            case 7 -> verReservas();
             default -> System.out.println("Hasta luego!");
         }
     }
@@ -125,9 +129,9 @@ public class Consola {
             scanner.nextLine();
 
             gestorRecursos.prestarRecursoAUsuario(recursos.get(0), idUsuario);
-            System.out.println("✅ Recurso prestado con éxito.");
+            System.out.println("Recurso prestado con éxito.");
         } catch (Exception e) {
-            System.out.println("❌ Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -142,8 +146,38 @@ public class Consola {
         }
 
         gestorRecursos.devolverRecurso(recursos.get(0));
-        System.out.println("✅ Recurso devuelto correctamente.");
+        System.out.println("Recurso devuelto correctamente.");
 }
 
+private void reservarRecurso() {
+    System.out.print("Ingrese título del recurso a reservar: ");
+    String titulo = scanner.nextLine();
+    List<RecursoDigital> recursos = gestorRecursos.buscarPorTitulo(titulo);
+
+    if (recursos.isEmpty()) {
+        System.out.println("No se encontró el recurso.");
+        return;
+    }
+
+    System.out.print("Ingrese ID del usuario: ");
+    int idUsuario = scanner.nextInt();
+    scanner.nextLine();
+
+    gestorRecursos.reservarRecurso(recursos.get(0), idUsuario);
+    System.out.println("Recurso reservado correctamente.");
+}
+
+private void verReservas() {
+    System.out.print("Ingrese título del recurso: ");
+    String titulo = scanner.nextLine();
+    List<RecursoDigital> recursos = gestorRecursos.buscarPorTitulo(titulo);
+
+    if (recursos.isEmpty()) {
+        System.out.println("No se encontró el recurso.");
+        return;
+    }
+
+    gestorRecursos.mostrarReservas(recursos.get(0));
+}
 
 }
