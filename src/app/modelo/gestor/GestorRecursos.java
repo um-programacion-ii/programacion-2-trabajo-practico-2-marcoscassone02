@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Categoria;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestable;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestamo;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.RecursoDigital;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.excepcion.RecursoNoDisponibleException;
 
 public class GestorRecursos {
     private List<RecursoDigital> recursos = new ArrayList<>();
+    private List<Prestamo> prestamos = new ArrayList<>();
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -49,5 +51,23 @@ public class GestorRecursos {
     } else {
         throw new RecursoNoDisponibleException("Este recurso no se puede prestar.");
     }
-}
+    }
+    public void prestarRecursoAUsuario(RecursoDigital recurso, int idUsuario) throws RecursoNoDisponibleException {
+        prestarRecurso(recurso);
+        prestamos.add(new Prestamo(recurso, idUsuario));
+    }
+
+    public void devolverRecurso(RecursoDigital recurso) {
+        if (recurso instanceof Prestable prestable) {
+            prestable.devolver();
+            prestamos.stream()
+                .filter(p -> p.getRecurso().equals(recurso) && !p.estaDevuelto())
+                .findFirst()
+                .ifPresent(Prestamo::marcarDevuelto);
+        }
+    }
+
+    public List<Prestamo> obtenerPrestamos() {
+        return prestamos;
+    }
 }
