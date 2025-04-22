@@ -18,6 +18,10 @@ public class Libro implements RecursoDigital, Prestable, Renovable {
         return "Libro";
     }
 
+    public Categoria getCategoria() {
+        return Categoria.Libro;
+    }
+
     public void mostrarInformacion() {
         System.out.println("📘 Libro: " + titulo + " - Autor: " + autor);
     }
