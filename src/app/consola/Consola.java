@@ -3,6 +3,7 @@ package programacion_2_trabajo_practico_2_marcoscassone02.src.app.consola;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.usuario.Usuario;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.*;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.*;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.notificacion.ServicioNotificaciones;
 
 
 
@@ -10,10 +11,12 @@ import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.
 public class Consola {
     private GestorUsuarios gestorUsuarios;
     private GestorRecursos gestorRecursos;
+    private ServicioNotificaciones servicioNotificaciones;
 
-    public Consola(GestorUsuarios gestorUsuarios, GestorRecursos gestorRecursos) {
+    public Consola(GestorUsuarios gestorUsuarios, GestorRecursos gestorRecursos, ServicioNotificaciones servicioNotificaciones) {
         this.gestorUsuarios = gestorUsuarios;
         this.gestorRecursos = gestorRecursos;
+        this.servicioNotificaciones = servicioNotificaciones;
     }
 
     public void iniciar() {
@@ -39,6 +42,7 @@ public class Consola {
                 renovable.renovar();
             }
 
+            servicioNotificaciones.enviarNotificacion("Se accedió al recurso: " + recurso.getTitulo());
             System.out.println();
         }
     }
