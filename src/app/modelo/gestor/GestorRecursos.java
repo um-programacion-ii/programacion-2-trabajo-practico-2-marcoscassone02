@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Categoria;
@@ -14,11 +16,15 @@ import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.RecursoDigital;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Reserva;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.excepcion.RecursoNoDisponibleException;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.notificacion.ServicioNotificaciones;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.notificacion.ServicioNotificacionesEmail;
 
 public class GestorRecursos {
     private List<RecursoDigital> recursos = new ArrayList<>();
     private List<Prestamo> prestamos = new ArrayList<>();
     private Map<RecursoDigital, PriorityQueue<Reserva>> reservas = new HashMap<>();
+    private ServicioNotificaciones servicioNotificaciones = new ServicioNotificacionesEmail();
+private ExecutorService executor = Executors.newFixedThreadPool(2);
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -85,7 +91,8 @@ public class GestorRecursos {
         PriorityQueue<Reserva> cola = reservas.get(recurso);
         if (cola != null && !cola.isEmpty()) {
             Reserva siguiente = cola.poll();
-            System.out.println("Notificando a usuario con ID " + siguiente.getIdUsuario() + " que el recurso está disponible");
+            String mensaje = "Recurso disponible para usuario ID " + siguiente.getIdUsuario();
+            executor.submit(() -> servicioNotificaciones.enviarNotificacion(mensaje));
         }
     }
     
@@ -101,4 +108,5 @@ public class GestorRecursos {
             System.out.println("Usuario ID: " + r.getIdUsuario() + " | Fecha: " + r.getFechaReserva());
         }
     }
+    
 }

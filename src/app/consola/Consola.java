@@ -164,7 +164,9 @@ private void reservarRecurso() {
     scanner.nextLine();
 
     gestorRecursos.reservarRecurso(recursos.get(0), idUsuario);
-    System.out.println("Recurso reservado correctamente.");
+    System.out.println("📌 Recurso reservado correctamente.");
+
+    gestorRecursos.procesarReservas(recursos.get(0));
 }
 
 private void verReservas() {
