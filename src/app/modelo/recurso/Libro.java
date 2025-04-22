@@ -30,6 +30,10 @@ public class Libro implements RecursoDigital, Prestable, Renovable {
         prestado = true;
     }
 
+    public void devolver() {
+        prestado = false;
+    }
+
     public boolean estaPrestado() {
         return prestado;
     }

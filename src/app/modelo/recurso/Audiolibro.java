@@ -30,6 +30,10 @@ public class Audiolibro implements RecursoDigital, Prestable {
         prestado = true;
     }
 
+    public void devolver() {
+        prestado = false;
+    }
+
     public boolean estaPrestado() {
         return prestado;
     }
