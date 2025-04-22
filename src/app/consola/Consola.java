@@ -31,7 +31,8 @@ public class Consola {
         System.out.println("📑 Recursos disponibles:");
         for (RecursoDigital recurso : gestorRecursos.obtenerRecursos()) {
             recurso.mostrarInformacion();
-        }
+            recurso.visualizarEnConsola();
     }
+}
 }
 
