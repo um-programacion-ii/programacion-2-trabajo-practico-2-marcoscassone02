@@ -3,6 +3,7 @@ package programacion_2_trabajo_practico_2_marcoscassone02.src.app.consola;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.usuario.Usuario;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.*;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.*;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.excepcion.RecursoNoDisponibleException;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.notificacion.ServicioNotificaciones;
 
 import java.util.Comparator;
@@ -114,29 +115,7 @@ public class Consola {
     }
     }
     private void prestarRecurso() {
-        try {
-            System.out.print("Ingrese título del recurso a prestar: ");
-            String titulo = scanner.nextLine();
-            List<RecursoDigital> recursos = gestorRecursos.buscarPorTitulo(titulo);
-
-            if (recursos.isEmpty()) {
-                System.out.println("No se encontró el recurso.");
-                return;
-            }
-
-            System.out.print("Ingrese ID del usuario: ");
-            int idUsuario = scanner.nextInt();
-            scanner.nextLine();
-
-            gestorRecursos.prestarRecursoAUsuario(recursos.get(0), idUsuario);
-            System.out.println("Recurso prestado con éxito.");
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    private void devolverRecurso() {
-        System.out.print("Ingrese título del recurso a devolver: ");
+        System.out.print("Ingrese título del recurso a prestar: ");
         String titulo = scanner.nextLine();
         List<RecursoDigital> recursos = gestorRecursos.buscarPorTitulo(titulo);
 
@@ -145,9 +124,29 @@ public class Consola {
             return;
         }
 
+        System.out.print("Ingrese ID del usuario: ");
+        int idUsuario = scanner.nextInt();
+        scanner.nextLine();
+
+        try {
+            gestorRecursos.prestarRecurso(recursos.get(0), idUsuario);
+        } catch (RecursoNoDisponibleException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void devolverRecurso() {
+        System.out.print("Ingrese título del recurso a devolver: ");
+        String titulo = scanner.nextLine();
+        List<RecursoDigital> recursos = gestorRecursos.buscarPorTitulo(titulo);
+    
+        if (recursos.isEmpty()) {
+            System.out.println("No se encontró el recurso.");
+            return;
+        }
+    
         gestorRecursos.devolverRecurso(recursos.get(0));
-        System.out.println("Recurso devuelto correctamente.");
-}
+    }
 
 private void reservarRecurso() {
     System.out.print("Ingrese título del recurso a reservar: ");
@@ -164,7 +163,7 @@ private void reservarRecurso() {
     scanner.nextLine();
 
     gestorRecursos.reservarRecurso(recursos.get(0), idUsuario);
-    System.out.println("📌 Recurso reservado correctamente.");
+    System.out.println("Recurso reservado correctamente.");
 
     gestorRecursos.procesarReservas(recursos.get(0));
 }
