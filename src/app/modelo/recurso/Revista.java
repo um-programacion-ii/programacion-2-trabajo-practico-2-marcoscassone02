@@ -2,11 +2,11 @@ package programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso
 
 public class Revista implements RecursoDigital {
     private String titulo;
-    private int numeroEdicion;
+    private int edicion;
 
-    public Revista(String titulo, int numeroEdicion) {
+    public Revista(String titulo, int edicion) {
         this.titulo = titulo;
-        this.numeroEdicion = numeroEdicion;
+        this.edicion = edicion;
     }
 
     public String getTitulo() {
@@ -17,8 +17,13 @@ public class Revista implements RecursoDigital {
         return "Revista";
     }
 
+    public Categoria getCategoria() {
+        return Categoria.Revista;
+    }
+
     public void mostrarInformacion() {
-        System.out.println("📰 Revista: " + titulo + " - Edición: " + numeroEdicion);
+        System.out.println("📰 Revista: " + titulo + " - Edición: " + edicion);
     }
 }
+
 

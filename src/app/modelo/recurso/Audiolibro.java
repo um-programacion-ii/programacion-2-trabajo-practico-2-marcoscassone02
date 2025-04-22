@@ -18,6 +18,10 @@ public class Audiolibro implements RecursoDigital, Prestable {
         return "Audiolibro";
     }
 
+    public Categoria getCategoria() {
+        return Categoria.Audiolibro;
+    }
+
     public void mostrarInformacion() {
         System.out.println("🎧 Audiolibro: " + titulo + " - Narrador: " + narrador);
     }
@@ -30,4 +34,3 @@ public class Audiolibro implements RecursoDigital, Prestable {
         return prestado;
     }
 }
-

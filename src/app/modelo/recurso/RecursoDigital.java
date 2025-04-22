@@ -4,6 +4,8 @@ public interface RecursoDigital {
     String getTitulo();
     String getTipo();
     void mostrarInformacion();
+    Categoria getCategoria();
+
     default void visualizarEnConsola() {
         System.out.println("Visualizando recurso: " + getTitulo() + " (" + getTipo() + ")");
     }

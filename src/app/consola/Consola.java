@@ -5,11 +5,10 @@ import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.*
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.*;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.notificacion.ServicioNotificaciones;
 
-
-
-
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Consola {
     private GestorUsuarios gestorUsuarios;
@@ -39,7 +38,8 @@ public class Consola {
         System.out.println("Menú de Gestión de Recursos");
         System.out.println("1. Mostrar todos los recursos");
         System.out.println("2. Buscar recurso por título");
-        System.out.println("3. Salir");
+        System.out.println("3. Buscar y filtrar recursos");
+        System.out.println("4. Salir");
 
         int opcion = scanner.nextInt();
         scanner.nextLine();
@@ -47,6 +47,7 @@ public class Consola {
         switch (opcion) {
             case 1 -> mostrarRecursos();
             case 2 -> buscarRecursoPorTitulo();
+            case 3 -> buscarYFiltrar();
             default -> System.out.println("Hasta luego!");
         }
     }
@@ -73,5 +74,44 @@ public class Consola {
             }
         }
     }
+    private void buscarYFiltrar() {
+    System.out.print("Ingrese texto del título (deje vacío para omitir): ");
+    String titulo = scanner.nextLine();
+
+    System.out.println("Seleccione categoría (Libro, Revista, Audiolibro o vacía): ");
+    String categoriaInput = scanner.nextLine();
+
+    List<RecursoDigital> resultados = gestorRecursos.obtenerRecursos();
+
+    if (!titulo.isEmpty()) {
+        resultados = gestorRecursos.buscarPorTitulo(titulo);
+    }
+
+    if (!categoriaInput.isEmpty()) {
+        try {
+            Categoria categoria = Categoria.valueOf(categoriaInput);
+            resultados = resultados.stream()
+                    .filter(r -> r.getCategoria() == categoria)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Categoría inválida. Se omite filtro de categoría.");
+        }
+    }
+
+    resultados = resultados.stream()
+            .sorted(Comparator.comparing(RecursoDigital::getTitulo))
+            .collect(Collectors.toList());
+
+    if (resultados.isEmpty()) {
+        System.out.println("No se encontraron recursos.");
+    } else {
+        System.out.println("Resultados encontrados:");
+        for (RecursoDigital recurso : resultados) {
+            recurso.mostrarInformacion();
+        }
+    }
+}
+
+
 }
 
