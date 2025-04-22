@@ -2,18 +2,23 @@ package programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Categoria;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestable;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestamo;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.RecursoDigital;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Reserva;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.excepcion.RecursoNoDisponibleException;
 
 public class GestorRecursos {
     private List<RecursoDigital> recursos = new ArrayList<>();
     private List<Prestamo> prestamos = new ArrayList<>();
+    private Map<RecursoDigital, PriorityQueue<Reserva>> reservas = new HashMap<>();
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -52,6 +57,7 @@ public class GestorRecursos {
         throw new RecursoNoDisponibleException("Este recurso no se puede prestar.");
     }
     }
+
     public void prestarRecursoAUsuario(RecursoDigital recurso, int idUsuario) throws RecursoNoDisponibleException {
         prestarRecurso(recurso);
         prestamos.add(new Prestamo(recurso, idUsuario));
@@ -69,5 +75,30 @@ public class GestorRecursos {
 
     public List<Prestamo> obtenerPrestamos() {
         return prestamos;
+    }
+    public void reservarRecurso(RecursoDigital recurso, int idUsuario) {
+        reservas.putIfAbsent(recurso, new PriorityQueue<>());
+        reservas.get(recurso).offer(new Reserva(idUsuario));
+    }
+    
+    public void procesarReservas(RecursoDigital recurso) {
+        PriorityQueue<Reserva> cola = reservas.get(recurso);
+        if (cola != null && !cola.isEmpty()) {
+            Reserva siguiente = cola.poll();
+            System.out.println("Notificando a usuario con ID " + siguiente.getIdUsuario() + " que el recurso está disponible");
+        }
+    }
+    
+    public void mostrarReservas(RecursoDigital recurso) {
+        PriorityQueue<Reserva> cola = reservas.get(recurso);
+        if (cola == null || cola.isEmpty()) {
+            System.out.println("No hay reservas para este recurso.");
+            return;
+        }
+    
+        System.out.println("Reservas en cola:");
+        for (Reserva r : cola) {
+            System.out.println("Usuario ID: " + r.getIdUsuario() + " | Fecha: " + r.getFechaReserva());
+        }
     }
 }
