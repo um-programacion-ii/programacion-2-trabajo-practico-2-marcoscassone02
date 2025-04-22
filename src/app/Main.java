@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
         GestorRecursos gestorRecursos = new GestorRecursos();
-        ServicioNotificaciones notificaciones = new ServicioNotificacionesEmail();
+        ServicioNotificacionesEmail notificaciones = new ServicioNotificacionesEmail();
         Consola consola = new Consola(gestorUsuarios, gestorRecursos, notificaciones);
         consola.iniciar();
     }
