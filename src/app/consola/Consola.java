@@ -1,12 +1,9 @@
 package programacion_2_trabajo_practico_2_marcoscassone02.src.app.consola;
 
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.usuario.Usuario;
-import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.GestorRecursos;
-import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.GestorUsuarios;
-import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Audiolibro;
-import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Libro;
-import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.RecursoDigital;
-import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Revista;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.*;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.*;
+
 
 
 
@@ -32,7 +29,18 @@ public class Consola {
         for (RecursoDigital recurso : gestorRecursos.obtenerRecursos()) {
             recurso.mostrarInformacion();
             recurso.visualizarEnConsola();
+
+            if (recurso instanceof Prestable prestable) {
+                prestable.prestar();
+                System.out.println("✅ Recurso prestado");
+            }
+
+            if (recurso instanceof Renovable renovable && renovable.puedeRenovarse()) {
+                renovable.renovar();
+            }
+
+            System.out.println();
+        }
     }
-}
 }
 
