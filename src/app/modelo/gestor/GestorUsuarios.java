@@ -1,19 +1,22 @@
 package programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.usuario.Usuario;
 
 public class GestorUsuarios {
-    private List<Usuario> usuarios = new ArrayList<>();
+    private Map<String, Usuario> usuarios = new HashMap<>();
 
     public void agregarUsuario(Usuario usuario) {
-        usuarios.add(usuario);
+        usuarios.put(usuario.getEmail(), usuario);
     }
 
-    public List<Usuario> obtenerUsuarios() {
+    public Usuario obtenerUsuarioPorEmail(String email) {
+        return usuarios.get(email);
+    }
+
+    public Map<String, Usuario> obtenerUsuarios() {
         return usuarios;
     }
 }

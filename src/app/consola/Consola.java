@@ -8,10 +8,14 @@ import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.
 
 
 
+import java.util.List;
+import java.util.Scanner;
+
 public class Consola {
     private GestorUsuarios gestorUsuarios;
     private GestorRecursos gestorRecursos;
     private ServicioNotificaciones servicioNotificaciones;
+    private Scanner scanner = new Scanner(System.in);
 
     public Consola(GestorUsuarios gestorUsuarios, GestorRecursos gestorRecursos, ServicioNotificaciones servicioNotificaciones) {
         this.gestorUsuarios = gestorUsuarios;
@@ -20,30 +24,53 @@ public class Consola {
     }
 
     public void iniciar() {
-        System.out.println("📚 Bienvenido al Sistema de Gestión de Biblioteca\n");
+        System.out.println("Bienvenido al Sistema de Gestión de Biblioteca\n");
 
-        gestorUsuarios.agregarUsuario(new Usuario("Marcos", 2, "marcoscassone02@egmail.com"));
+        gestorUsuarios.agregarUsuario(new Usuario("Marcos", 1, "marcos02@gmail.com"));
 
-        gestorRecursos.agregarRecurso(new Libro("El Principito", "Antoine"));
-        gestorRecursos.agregarRecurso(new Revista("Mas Personas", 108));
-        gestorRecursos.agregarRecurso(new Audiolibro("Cualquiera", "Pepe Voice"));
+        gestorRecursos.agregarRecurso(new Libro("El Principito", "Antoine de Saint-Exupéry"));
+        gestorRecursos.agregarRecurso(new Revista("Science Today", 108));
+        gestorRecursos.agregarRecurso(new Audiolibro("1984", "Pepe Voice"));
 
-        System.out.println("📑 Recursos disponibles:");
-        for (RecursoDigital recurso : gestorRecursos.obtenerRecursos()) {
+        mostrarMenu();
+    }
+
+    private void mostrarMenu() {
+        System.out.println("Menú de Gestión de Recursos");
+        System.out.println("1. Mostrar todos los recursos");
+        System.out.println("2. Buscar recurso por título");
+        System.out.println("3. Salir");
+
+        int opcion = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (opcion) {
+            case 1 -> mostrarRecursos();
+            case 2 -> buscarRecursoPorTitulo();
+            default -> System.out.println("Hasta luego!");
+        }
+    }
+
+    private void mostrarRecursos() {
+        List<RecursoDigital> recursos = gestorRecursos.obtenerRecursos();
+        for (RecursoDigital recurso : recursos) {
             recurso.mostrarInformacion();
             recurso.visualizarEnConsola();
+        }
+    }
 
-            if (recurso instanceof Prestable prestable) {
-                prestable.prestar();
-                System.out.println("✅ Recurso prestado");
+    private void buscarRecursoPorTitulo() {
+        System.out.print("Ingrese título a buscar: ");
+        String titulo = scanner.nextLine();
+        List<RecursoDigital> resultados = gestorRecursos.buscarPorTitulo(titulo);
+
+        if (resultados.isEmpty()) {
+            System.out.println("No se encontraron recursos con ese título.");
+        } else {
+            System.out.println("Recursos encontrados:");
+            for (RecursoDigital recurso : resultados) {
+                recurso.mostrarInformacion();
             }
-
-            if (recurso instanceof Renovable renovable && renovable.puedeRenovarse()) {
-                renovable.renovar();
-            }
-
-            servicioNotificaciones.enviarNotificacion("Se accedió al recurso: " + recurso.getTitulo());
-            System.out.println();
         }
     }
 }
