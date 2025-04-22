@@ -3,6 +3,7 @@ package programacion_2_trabajo_practico_2_marcoscassone02.src.app.consola;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.usuario.Usuario;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.gestor.*;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.*;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.excepcion.RecursoNoDisponibleException;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.notificacion.ServicioNotificaciones;
 
 import java.util.Comparator;
@@ -39,7 +40,8 @@ public class Consola {
         System.out.println("1. Mostrar todos los recursos");
         System.out.println("2. Buscar recurso por título");
         System.out.println("3. Buscar y filtrar recursos");
-        System.out.println("4. Salir");
+        System.out.println("4. Prestar recurso");
+        System.out.println("5. Salir");
 
         int opcion = scanner.nextInt();
         scanner.nextLine();
@@ -48,6 +50,7 @@ public class Consola {
             case 1 -> mostrarRecursos();
             case 2 -> buscarRecursoPorTitulo();
             case 3 -> buscarYFiltrar();
+            case 4 -> prestarRecurso();
             default -> System.out.println("Hasta luego!");
         }
     }
@@ -105,7 +108,26 @@ public class Consola {
         }
     }
 }
+    private void prestarRecurso() {
+        try {
+            System.out.print("Ingrese título del recurso a prestar: ");
+            String titulo = scanner.nextLine();
+            List<RecursoDigital> recursos = gestorRecursos.buscarPorTitulo(titulo);
+
+            if (recursos.isEmpty()) {
+                System.out.println("No se encontró el recurso.");
+                return;
+            }
+
+            RecursoDigital recurso = recursos.get(0);
+            gestorRecursos.prestarRecurso(recurso);
+            System.out.println("Recurso prestado con éxito.");
+        } catch (RecursoNoDisponibleException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error inesperado.");
+        }
+    }
 
 
 }
-
