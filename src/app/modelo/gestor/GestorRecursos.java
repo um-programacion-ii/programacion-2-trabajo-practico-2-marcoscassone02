@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.AlertaVencimiento;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Categoria;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestable;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestamo;
@@ -27,6 +28,7 @@ public class GestorRecursos {
     private ExecutorService executor = Executors.newFixedThreadPool(2);
     private Map<RecursoDigital, Integer> prestamosContador = new HashMap<>();
     private Map<Integer, Integer> prestamosPorUsuario = new HashMap<>();
+    private AlertaVencimiento alertaVencimiento = new AlertaVencimiento(prestamos, servicioNotificaciones);
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -54,20 +56,23 @@ public class GestorRecursos {
                 .collect(Collectors.toList());
     }
     
-    public void prestarRecurso(RecursoDigital recurso) throws RecursoNoDisponibleException {
-    if (recurso instanceof Prestable prestable) {
-        if (prestable.estaPrestado()) {
-            throw new RecursoNoDisponibleException("El recurso ya está prestado.");
-        } else {
+    public synchronized void prestarRecurso(RecursoDigital recurso, int idUsuario) throws RecursoNoDisponibleException {
+        if (recurso instanceof Prestable prestable) {
+            if (!prestable.estaDisponible()) {
+                throw new RecursoNoDisponibleException("El recurso no está disponible para préstamo.");
+            }
             prestable.prestar();
+            prestamosContador.put(recurso, prestamosContador.getOrDefault(recurso, 0) + 1);
+            prestamosPorUsuario.put(idUsuario, prestamosPorUsuario.getOrDefault(idUsuario, 0) + 1);
+            prestamos.add(new Prestamo(recurso, idUsuario));
+            System.out.println("✅ Recurso prestado al usuario ID: " + idUsuario);
+        } else {
+            throw new RecursoNoDisponibleException("El recurso no admite préstamos.");
         }
-    } else {
-        throw new RecursoNoDisponibleException("Este recurso no se puede prestar.");
-    }
     }
 
     public void prestarRecursoAUsuario(RecursoDigital recurso, int idUsuario) throws RecursoNoDisponibleException {
-        prestarRecurso(recurso);
+        prestarRecurso(recurso, idUsuario);
         prestamos.add(new Prestamo(recurso, idUsuario));
     }
 
@@ -112,18 +117,6 @@ public class GestorRecursos {
         }
     }
     
-    public synchronized void prestarRecurso(RecursoDigital recurso, int idUsuario) throws RecursoNoDisponibleException {
-        if (recurso instanceof Prestable prestable) {
-            if (!prestable.estaDisponible()) {
-                throw new RecursoNoDisponibleException("El recurso no está disponible para préstamo.");
-            }
-            prestable.prestar();
-            System.out.println("Recurso prestado al usuario ID: " + idUsuario);
-        } else {
-            throw new RecursoNoDisponibleException("El recurso no admite préstamos.");
-        }
-    }
-
     public void mostrarReportePrestamos() {
         System.out.println("Recursos más prestados:");
         prestamosContador.entrySet().stream()
@@ -149,6 +142,10 @@ public class GestorRecursos {
     
         estadisticas.forEach((categoria, cantidad) ->
             System.out.println("• " + categoria + ": " + cantidad + " recursos prestados"));
+    }
+
+    public GestorRecursos() {
+        alertaVencimiento.iniciarMonitoreo();
     }
     
     
