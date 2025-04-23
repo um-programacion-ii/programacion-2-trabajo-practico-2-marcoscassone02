@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.AlertaDisponibilidad;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.AlertaVencimiento;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Categoria;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestable;
@@ -29,6 +32,9 @@ public class GestorRecursos {
     private Map<RecursoDigital, Integer> prestamosContador = new HashMap<>();
     private Map<Integer, Integer> prestamosPorUsuario = new HashMap<>();
     private AlertaVencimiento alertaVencimiento = new AlertaVencimiento(prestamos, servicioNotificaciones);
+    private Map<RecursoDigital, BlockingQueue<Integer>> reservasPendientes = new ConcurrentHashMap<>();
+    private AlertaDisponibilidad alertaDisponibilidad = new AlertaDisponibilidad(reservasPendientes, servicioNotificaciones);
+
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -65,7 +71,7 @@ public class GestorRecursos {
             prestamosContador.put(recurso, prestamosContador.getOrDefault(recurso, 0) + 1);
             prestamosPorUsuario.put(idUsuario, prestamosPorUsuario.getOrDefault(idUsuario, 0) + 1);
             prestamos.add(new Prestamo(recurso, idUsuario));
-            System.out.println("✅ Recurso prestado al usuario ID: " + idUsuario);
+            System.out.println("Recurso prestado al usuario ID: " + idUsuario);
         } else {
             throw new RecursoNoDisponibleException("El recurso no admite préstamos.");
         }
@@ -146,6 +152,7 @@ public class GestorRecursos {
 
     public GestorRecursos() {
         alertaVencimiento.iniciarMonitoreo();
+        alertaDisponibilidad.iniciar();
     }
     
     
