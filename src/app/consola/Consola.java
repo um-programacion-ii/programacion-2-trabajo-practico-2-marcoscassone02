@@ -43,8 +43,10 @@ public class Consola {
         System.out.println("4. Prestar recurso");
         System.out.println("5. Devolver recurso");
         System.out.println("6. Reservar recurso");
-        System.out.println("7. Ver reservas de recurso");
-        System.out.println("8. Salir");
+        System.out.println("7. Reporte de recursos más prestados");
+        System.out.println("8. Reporte de usuarios más activos");
+        System.out.println("9. Estadísticas por categoría");
+        System.out.println("10. Salir");
     
         int opcion = scanner.nextInt();
         scanner.nextLine();
@@ -56,7 +58,9 @@ public class Consola {
             case 4 -> prestarRecurso();
             case 5 -> devolverRecurso();
             case 6 -> reservarRecurso();
-            case 7 -> verReservas();
+            case 7 -> gestorRecursos.mostrarReportePrestamos();
+            case 8 -> gestorRecursos.mostrarReporteUsuariosActivos();
+            case 9 -> gestorRecursos.mostrarEstadisticasPorCategoria();
             default -> System.out.println("Hasta luego!");
         }
     }
