@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.AlertaDisponibilidad;
+import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.AlertaRecordatorio;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.AlertaVencimiento;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Categoria;
 import programacion_2_trabajo_practico_2_marcoscassone02.src.app.modelo.recurso.Prestable;
@@ -34,6 +36,8 @@ public class GestorRecursos {
     private AlertaVencimiento alertaVencimiento = new AlertaVencimiento(prestamos, servicioNotificaciones);
     private Map<RecursoDigital, BlockingQueue<Integer>> reservasPendientes = new ConcurrentHashMap<>();
     private AlertaDisponibilidad alertaDisponibilidad = new AlertaDisponibilidad(reservasPendientes, servicioNotificaciones);
+    private List<String> eventosRecordatorios = new CopyOnWriteArrayList<>();
+    private AlertaRecordatorio alertaRecordatorio = new AlertaRecordatorio(eventosRecordatorios, servicioNotificaciones);
 
 
     public void agregarRecurso(RecursoDigital recurso) {
@@ -150,9 +154,29 @@ public class GestorRecursos {
             System.out.println("• " + categoria + ": " + cantidad + " recursos prestados"));
     }
 
+    private void generarReportesAsync() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            try {
+                System.out.println("Generando reportes de uso en segundo plano...");
+                Thread.sleep(3000); 
+                System.out.println("[✔️] Reportes generados exitosamente.");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Error al generar reportes: " + e.getMessage());
+            }
+        });
+    }
+
     public GestorRecursos() {
         alertaVencimiento.iniciarMonitoreo();
         alertaDisponibilidad.iniciar();
+        alertaRecordatorio.iniciar();
+        generarReportesAsync();
+    }
+
+    public void agregarEventoRecordatorio(String mensaje) {
+        eventosRecordatorios.add(mensaje);
     }
     
     
