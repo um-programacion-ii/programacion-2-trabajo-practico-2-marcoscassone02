@@ -25,6 +25,8 @@ public class GestorRecursos {
     private Map<RecursoDigital, PriorityQueue<Reserva>> reservas = new HashMap<>();
     private ServicioNotificaciones servicioNotificaciones = new ServicioNotificacionesEmail();
     private ExecutorService executor = Executors.newFixedThreadPool(2);
+    private Map<RecursoDigital, Integer> prestamosContador = new HashMap<>();
+    private Map<Integer, Integer> prestamosPorUsuario = new HashMap<>();
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
@@ -120,6 +122,33 @@ public class GestorRecursos {
         } else {
             throw new RecursoNoDisponibleException("El recurso no admite préstamos.");
         }
+    }
+
+    public void mostrarReportePrestamos() {
+        System.out.println("Recursos más prestados:");
+        prestamosContador.entrySet().stream()
+            .sorted((a, b) -> b.getValue() - a.getValue())
+            .limit(5)
+            .forEach(entry ->
+                System.out.println("• " + entry.getKey().getTitulo() + " - " + entry.getValue() + " préstamos"));
+    }
+    
+    public void mostrarReporteUsuariosActivos() {
+        System.out.println("Usuarios más activos:");
+        prestamosPorUsuario.entrySet().stream()
+            .sorted((a, b) -> b.getValue() - a.getValue())
+            .limit(5)
+            .forEach(entry ->
+                System.out.println("• Usuario ID " + entry.getKey() + " - " + entry.getValue() + " préstamos"));
+    }
+    
+    public void mostrarEstadisticasPorCategoria() {
+        System.out.println("Estadísticas por categoría:");
+        Map<Categoria, Long> estadisticas = prestamosContador.keySet().stream()
+            .collect(Collectors.groupingBy(RecursoDigital::getCategoria, Collectors.counting()));
+    
+        estadisticas.forEach((categoria, cantidad) ->
+            System.out.println("• " + categoria + ": " + cantidad + " recursos prestados"));
     }
     
     
